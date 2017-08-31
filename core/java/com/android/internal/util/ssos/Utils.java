@@ -60,6 +60,7 @@ import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 
 import com.android.internal.R;
+import com.android.internal.statusbar.IStatusBarService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -273,7 +274,23 @@ public class Utils {
         return false;
     }
 
-    public static class OverlayManager {
+    public static boolean deviceHasFlashlight(Context ctx) {
+        return ctx.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+    }
+
+    public static void toggleCameraFlash() {
+        final IStatusBarService service = IStatusBarService.Stub.asInterface(
+                        ServiceManager.getService("statusbar"));
+        if (service != null) {
+            try {
+                service.toggleCameraFlash();
+            } catch (RemoteException e) {
+                // do nothing.
+            }
+        }
+    }
+
+   public static class OverlayManager {
         private final IOverlayManager mService;
 
         public OverlayManager() {
